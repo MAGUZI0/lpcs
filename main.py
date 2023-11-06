@@ -69,7 +69,7 @@ if st.session_state.page == "home":
     cursor.execute("SELECT id, pw FROM user")
     data = cursor.fetchall()
     conn.close()  # 데이터베이스 연결 닫기
-
+    text=st.text_input("원하는 내용을 입력하세요!")
     for row in data:
         st.write(f"아이디: {row[0]}, 비밀번호: {row[1]}")
     # 로그아웃
