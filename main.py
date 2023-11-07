@@ -68,14 +68,26 @@ if st.session_state.page == "home":
     cursor = conn.cursor()
     cursor.execute("SELECT id, pw FROM user")
     data = cursor.fetchall()
-    conn.close()  # 데이터베이스 연결 닫기
-    text=st.text_input("원하는 내용을 입력하세요!")
+    input_content = st.text_input("원하는 내용을 입력하세요!",type="default", key="input_content")
+    cursor.execute("INSERT INTO text (content,good,dislike) VALUES(?,0,0)", (str(input_content),))
+    conn.commit()
+    cursor.execute("SELECT num,content,good,dislike FROM text")
+    text = cursor.fetchall()
+    conn.close()
+    for row in text:
+        st.write(f"번호: {row[0]}, 내용: {row[1]}")
+        st.write(f"like: {row[2]}, dislike: {row[3]}")
+        like_button_key = f'like_button_{row[0]}'
+        dislike_button_key = f'dislike_button_{row[0]}'
+        if st.button('like', key=like_button_key):
+            row[2] = row[2] + 1
+        if st.button('dislike', key=dislike_button_key):
+            row[3] = row[3] + 1
     for row in data:
         st.write(f"아이디: {row[0]}, 비밀번호: {row[1]}")
     # 로그아웃
     if st.button("로그아웃"):
         initialize_state()  # 로그아웃하면 다시 초기화
-
 # 회원가입 페이지
 if not st.session_state.logged_in:
     st.header("회원가입")
